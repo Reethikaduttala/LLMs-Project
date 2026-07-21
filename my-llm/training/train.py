@@ -18,13 +18,9 @@ from data import LLMDataset, create_dataloader
 from training.trainer import Trainer
 
 
-# =====================================================================
-# Command Line Arguments
-# =====================================================================
-
 def parse_args():
     parser = argparse.ArgumentParser(description="Train a GPT model.")
-    
+
     parser.add_argument(
         "--config",
         default="llm.config.js",
@@ -39,25 +35,17 @@ def parse_args():
     parser.add_argument(
         "--resume",
         default=None,
-        help="Checkpoint path to resume training from",
+        help="Specific checkpoint path to resume training from (overrides auto-resume)",
     )
-    
+
     return parser.parse_args()
 
-
-# =====================================================================
-# Device Configuration
-# =====================================================================
 
 def get_device(device_arg):
     if device_arg == "auto":
         return "cuda" if torch.cuda.is_available() else "cpu"
     return device_arg
 
-
-# =====================================================================
-# Data Loading
-# =====================================================================
 
 def load_datasets(config, device):
     data_cfg = config.data()
@@ -97,10 +85,6 @@ def load_datasets(config, device):
 
     return train_loader, val_loader
 
-
-# =====================================================================
-# Main Execution Flow
-# =====================================================================
 
 def main():
     args = parse_args()
@@ -144,14 +128,15 @@ def main():
         )
         trainer.summary()
 
-        # Check for Checkpoint Resume
+        # ----------------------------------------------------
+        # Resume Training & Loop Start
+        # ----------------------------------------------------
         if args.resume:
-            print(f"\nResuming from checkpoint: {args.resume}")
+            print(f"\nLoading explicit checkpoint: {args.resume}")
             trainer.load_checkpoint(args.resume)
-
-        # Start Training Loop
-        print("\nStarting Training...\n")
-        trainer.train()
+            trainer.train(auto_resume=False)
+        else:
+            trainer.train(auto_resume=True)
 
         print("\nTraining Completed Successfully!")
         print("Final model checkpoints saved inside checkpoints/ directory.")
