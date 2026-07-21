@@ -1,0 +1,9 @@
+# Ignore trained model checkpoints
+*.pt
+
+# Ignore processed data artifacts
+/data/processed/train.pt
+/data/processed/val.pt
+
+# Optional: ignore checkpoint files in checkpoints folder explicitly
+/checkpoints/
