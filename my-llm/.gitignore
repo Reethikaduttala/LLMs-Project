@@ -5,5 +5,3 @@
 /data/processed/train.pt
 /data/processed/val.pt
 
-# Optional: ignore checkpoint files in checkpoints folder explicitly
-/checkpoints/
